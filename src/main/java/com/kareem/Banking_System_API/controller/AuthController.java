@@ -10,10 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -38,7 +35,7 @@ public class AuthController {
 
         userRepository.save(user);
         System.out.println("User registered: " + user.getUsername());
-        return "User registered successfully"
+        return "User registered successfully";
     }
 
     @PostMapping("/login")
@@ -53,5 +50,10 @@ public class AuthController {
         } else {
             throw new RuntimeException("Invalid Credentials");
         }
+    }
+
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "Welcome to the Banking System API!";
     }
 }
