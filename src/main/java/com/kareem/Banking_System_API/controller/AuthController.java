@@ -38,7 +38,7 @@ public class AuthController {
 
         userRepository.save(user);
         System.out.println("User registered: " + user.getUsername());
-        return "User registered successfully\n" + jwtService.generateToken(user.getUsername());
+        return "User registered successfully"
     }
 
     @PostMapping("/login")
