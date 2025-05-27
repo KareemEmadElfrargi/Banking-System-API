@@ -5,6 +5,7 @@ import com.kareem.Banking_System_API.model.User;
 import com.kareem.Banking_System_API.repository.UserRepo;
 import com.kareem.Banking_System_API.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,20 +25,20 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/signup")
-    public String register(@RequestBody AuthRequest user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+    public String register(@RequestBody AuthRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists";
         }
 
-        User newUser = User.builder()
-                .username(user.getUsername())
-                .password(passwordEncoder.encode(user.getPassword()))
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role("USER")
                 .build();
 
-        userRepository.save(newUser);
-        System.out.println("User registered: " + newUser.getUsername());
-        return "User registered successfully";
+        userRepository.save(user);
+        System.out.println("User registered: " + user.getUsername());
+        return "User registered successfully\n" + jwtService.generateToken(user.getUsername());
     }
 
     @PostMapping("/login")
