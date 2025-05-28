@@ -12,6 +12,12 @@ A RESTful API for managing users and bank accounts using **Spring Boot** with **
 - Role-based access control  
 - Data validation and error handling  
 
+Secure transactions using JWT ownership check + user-account relation
+- Linked BankAccount to User via @ManyToOne relation
+- Added ownership check in deposit/withdraw logic using JWT
+- Created endpoint to fetch current user's accounts (/api/accounts/my)
+- Prevented unauthorized access to others' accounts
+
 ---
 
 ## Technologies Used
