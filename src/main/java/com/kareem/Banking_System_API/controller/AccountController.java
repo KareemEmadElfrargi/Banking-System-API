@@ -26,7 +26,7 @@ public class AccountController {
         return ResponseEntity.ok(accounts);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<BankAccount> createAccount(@AuthenticationPrincipal UserDetails userDetails,
                                                  @RequestBody BankAccount account) {
         User user = ((UserPrincipal) userDetails).getUser();
