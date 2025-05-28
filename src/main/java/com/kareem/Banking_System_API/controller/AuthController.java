@@ -2,10 +2,9 @@ package com.kareem.Banking_System_API.controller;
 
 import com.kareem.Banking_System_API.model.AuthRequest;
 import com.kareem.Banking_System_API.model.User;
-import com.kareem.Banking_System_API.repository.UserRepo;
+import com.kareem.Banking_System_API.repository.UserRepository;
 import com.kareem.Banking_System_API.service.JwtService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final UserRepo userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/signup")

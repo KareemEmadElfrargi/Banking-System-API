@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AccountRepo extends JpaRepository<BankAccount, Long> {
+public interface AccountRepository extends JpaRepository<BankAccount, Long> {
     List<BankAccount> findByUser(User user);
 }
