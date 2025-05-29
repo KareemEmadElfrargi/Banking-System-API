@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -104,6 +105,18 @@ public class TransactionService {
         bankAccountRepository.save(fromAccount);
         bankAccountRepository.save(toAccount);
 
+    }
+
+    public List<Transaction> getTransactionsForAccount(Long accountId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        BankAccount account = bankAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        if (!account.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You are not allowed to access this account’s transactions");
+        }
+
+        return transactionRepository.findByBankAccountId(accountId);
     }
 
 }
