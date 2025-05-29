@@ -17,6 +17,7 @@ import java.util.List;
 public class TransactionService {
     private final AccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
+    private double tax = 0;
 
     public void deposit(Long accountId, double amount) {
 
@@ -82,7 +83,8 @@ public class TransactionService {
         if (fromAccount.getBalance() < amount) {
             throw new RuntimeException("The balance is insufficient");
         }
-        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        tax = amount * 0.05;
+        fromAccount.setBalance(fromAccount.getBalance() - amount - tax);
         toAccount.setBalance(toAccount.getBalance() + amount);
 
         Transaction outTransaction = Transaction.builder()

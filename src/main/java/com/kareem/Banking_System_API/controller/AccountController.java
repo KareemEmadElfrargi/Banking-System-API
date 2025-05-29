@@ -1,7 +1,9 @@
 package com.kareem.Banking_System_API.controller;
 
+import com.kareem.Banking_System_API.dto.CreateAccountRequest;
 import com.kareem.Banking_System_API.model.BankAccount;
 import com.kareem.Banking_System_API.model.User;
+import com.kareem.Banking_System_API.repository.AccountRepository;
 import com.kareem.Banking_System_API.repository.UserRepository;
 import com.kareem.Banking_System_API.service.AccountService;
 import com.kareem.Banking_System_API.service.UserPrincipal;
@@ -21,6 +23,7 @@ public class AccountController {
 
     private final AccountService accountService;
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
 
     @GetMapping
@@ -32,11 +35,17 @@ public class AccountController {
 
     @PostMapping("/create")
     public ResponseEntity<BankAccount> createAccount(@AuthenticationPrincipal UserDetails userDetails,
-                                                 @RequestBody BankAccount account) {
+                                                     @RequestBody BankAccount account) {
         User user = ((UserPrincipal) userDetails).getUser();
-        account.setUser(user);
 
-        BankAccount savedAccount = accountService.createAccount(account);
+//        account.setUser(user);
+        BankAccount accountBank = BankAccount.builder()
+                .balance(account.getBalance())
+                .accountName(account.getAccountName())
+                .accountNumber(account.getAccountNumber())
+                .user(user)
+                .build();
+        BankAccount savedAccount = accountService.createAccount(accountBank);
         return ResponseEntity.ok(savedAccount);
     }
 
@@ -47,6 +56,7 @@ public class AccountController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return ResponseEntity.ok(user.getBankAccounts());
+        List<BankAccount> accounts = accountRepository.findByUser(user);
+        return ResponseEntity.ok(accounts);
     }
 }
