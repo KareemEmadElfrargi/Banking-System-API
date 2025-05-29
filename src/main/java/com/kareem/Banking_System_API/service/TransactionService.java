@@ -17,12 +17,12 @@ public class TransactionService {
     private final AccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
 
-    public void deposit(Long accountId , double amount){
+    public void deposit(Long accountId, double amount) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         BankAccount account = bankAccountRepository.findById(accountId)
-                .orElseThrow(()-> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new RuntimeException("Account not found"));
 
         if (!account.getUser().getUsername().equals(username)) {
             throw new RuntimeException("Can't Access");
@@ -39,7 +39,7 @@ public class TransactionService {
         bankAccountRepository.save(account);
     }
 
-    public void withdraw (Long accountId , double amount){
+    public void withdraw(Long accountId, double amount) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         BankAccount account = bankAccountRepository.findById(accountId)
@@ -64,6 +64,46 @@ public class TransactionService {
 
         transactionRepository.save(transaction);
         bankAccountRepository.save(account);
+    }
+
+    public void transfer(Long fromAccountId, Long toAccountId, double amount) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        BankAccount fromAccount = bankAccountRepository.findById(fromAccountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        BankAccount toAccount = bankAccountRepository.findById(toAccountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        if (!fromAccount.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You do not have the right to transfer from an account that is not yours");
+        }
+
+        if (fromAccount.getBalance() < amount) {
+            throw new RuntimeException("The balance is insufficient");
+        }
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        Transaction outTransaction = Transaction.builder()
+                .amount(amount)
+                .type(TransactionType.OUT)
+                .timestamp(LocalDateTime.now())
+                .bankAccount(fromAccount)
+                .build();
+
+        Transaction inTransaction = Transaction.builder()
+                .amount(amount)
+                .type(TransactionType.IN)
+                .timestamp(LocalDateTime.now())
+                .bankAccount(toAccount)
+                .build();
+
+        transactionRepository.save(outTransaction);
+        transactionRepository.save(inTransaction);
+
+        bankAccountRepository.save(fromAccount);
+        bankAccountRepository.save(toAccount);
+
     }
 
 }

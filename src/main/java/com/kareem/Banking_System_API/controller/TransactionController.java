@@ -1,6 +1,7 @@
 package com.kareem.Banking_System_API.controller;
 
 import com.kareem.Banking_System_API.dto.TransactionRequest;
+import com.kareem.Banking_System_API.dto.TransferRequest;
 import com.kareem.Banking_System_API.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,12 @@ public class TransactionController {
     @PostMapping("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TransactionRequest request) {
         transactionService.withdraw(request.getAccountId(), request.getAmount());
-        return ResponseEntity.ok("Money withdraw , amount : + amount");
+        return ResponseEntity.ok("Money withdraw , amount : "+ request.getAmount());
+    }
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transfer(@RequestBody TransferRequest request) {
+        transactionService.transfer(request.getFromAccountId(),request.getToAccountId(),request.getAmount());
+        return ResponseEntity.ok("Money transferred , amount : "+ request.getAmount());
     }
 }
 
