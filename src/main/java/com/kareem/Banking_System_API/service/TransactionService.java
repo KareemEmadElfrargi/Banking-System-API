@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class TransactionService {
     private final AccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
+    private double dailyLimit = 10000.0;
 
     public void deposit(Long accountId, double amount) {
 
@@ -108,10 +110,10 @@ public class TransactionService {
     }
 
     private double setTax(double amount) {
-        double tax =0;
-        if (amount > 70000){
+        double tax = 0;
+        if (amount > 70000) {
             tax = 20.0;
-        }else {
+        } else {
             tax = 0.5;
         }
         return tax;
@@ -130,4 +132,29 @@ public class TransactionService {
         return transactionRepository.findByBankAccountId(accountId);
     }
 
+    public double getTotalWithdrawnToday(BankAccount account) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+        return transactionRepository.findByBankAccountAndTypeInAndTimestampBetween(
+                        account,
+                        List.of(TransactionType.WITHDRAW, TransactionType.OUT),
+                        startOfDay,
+                        endOfDay
+                ).stream()
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+
+    }
+
+
+    public BankAccount getAccountIfAuthorized(Long accountId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        BankAccount account = bankAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        if (!account.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You do not have access to this account");
+        }
+        return account;
+    }
 }

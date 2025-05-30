@@ -2,6 +2,7 @@ package com.kareem.Banking_System_API.controller;
 
 import com.kareem.Banking_System_API.dto.TransactionRequest;
 import com.kareem.Banking_System_API.dto.TransferRequest;
+import com.kareem.Banking_System_API.model.BankAccount;
 import com.kareem.Banking_System_API.model.Transaction;
 import com.kareem.Banking_System_API.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,12 @@ public class TransactionController {
         List<Transaction> transactions = transactionService.getTransactionsForAccount(accountId);
         return ResponseEntity.ok(transactions);
     }
+
+    @GetMapping("/{accountId}/withdrawn-today")
+    public double getWithdrawnToday(@PathVariable Long accountId){
+        BankAccount account = transactionService.getAccountIfAuthorized(accountId);
+        return transactionService.getTotalWithdrawnToday(account);
+    }
+
 }
 
