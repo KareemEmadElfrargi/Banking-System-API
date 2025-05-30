@@ -17,6 +17,7 @@ import java.util.List;
 public class TransactionController {
     private final TransactionService transactionService;
 
+
     @PostMapping("/deposit")
     public ResponseEntity<String> deposit(@RequestBody TransactionRequest request) {
 
@@ -45,7 +46,7 @@ public class TransactionController {
     @GetMapping("/{accountId}/withdrawn-today")
     public double getWithdrawnToday(@PathVariable Long accountId){
         BankAccount account = transactionService.getAccountIfAuthorized(accountId);
-        return transactionService.getTotalWithdrawnToday(account);
+        return transactionService.getTotalWithdrawnOrTransferredToday(account);
     }
 
 }

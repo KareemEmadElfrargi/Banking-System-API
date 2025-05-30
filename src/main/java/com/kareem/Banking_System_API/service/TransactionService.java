@@ -18,7 +18,7 @@ import java.util.List;
 public class TransactionService {
     private final AccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
-    private double dailyLimit = 10000.0;
+    private double DAILY_TRANSACTION_LIMIT = 10000.0;
 
     public void deposit(Long accountId, double amount) {
 
@@ -45,6 +45,12 @@ public class TransactionService {
     public void withdraw(Long accountId, double amount) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        BankAccount bankAccount = bankAccountRepository.findById(accountId).orElseThrow(() -> new RuntimeException("Account not found"));
+
+        double totalToday = getTotalWithdrawnOrTransferredToday(bankAccount);
+        if (totalToday + amount > DAILY_TRANSACTION_LIMIT) {
+            throw new RuntimeException("Exceeded daily transaction limit");
+        }
         BankAccount account = bankAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
@@ -76,6 +82,12 @@ public class TransactionService {
 
         BankAccount toAccount = bankAccountRepository.findById(toAccountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        double totalToday = getTotalWithdrawnOrTransferredToday(fromAccount);
+
+        if (totalToday + amount > DAILY_TRANSACTION_LIMIT) {
+            throw new RuntimeException("Exceeded daily transaction limit");
+        }
 
         if (!fromAccount.getUser().getUsername().equals(username)) {
             throw new RuntimeException("You do not have the right to transfer from an account that is not yours");
@@ -132,7 +144,7 @@ public class TransactionService {
         return transactionRepository.findByBankAccountId(accountId);
     }
 
-    public double getTotalWithdrawnToday(BankAccount account) {
+    public double getTotalWithdrawnOrTransferredToday(BankAccount account) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
         LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
         return transactionRepository.findByBankAccountAndTypeInAndTimestampBetween(
