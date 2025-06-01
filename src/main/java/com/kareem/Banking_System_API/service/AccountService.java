@@ -19,6 +19,9 @@ public class AccountService {
     public BankAccount createAccount(BankAccount account) {
         return accountRepository.save(account);
     }
+    public Double getTotalBalance(User user) {
+        return accountRepository.getTotalBalanceByUser(user);
+    }
 
 
 }

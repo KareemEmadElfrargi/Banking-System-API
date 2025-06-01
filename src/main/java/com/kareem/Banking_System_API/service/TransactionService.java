@@ -19,7 +19,7 @@ import java.util.List;
 public class TransactionService {
     private final AccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
-    private double DAILY_TRANSACTION_LIMIT = 10000.0;
+    private final double DAILY_TRANSACTION_LIMIT = 10000.0;
 
     public void deposit(Long accountId, double amount) {
 
@@ -123,7 +123,7 @@ public class TransactionService {
     }
 
     private double setTax(double amount) {
-        double tax = 0;
+        double tax ;
         if (amount > 70000) {
             tax = 20.0;
         } else {
@@ -183,6 +183,6 @@ public class TransactionService {
     }
     public List<Transaction> getLast5Transactions(BankAccount bankAccount) {
         return transactionRepository.findTop5ByBankAccountOrderByTimestampDesc(bankAccount);
-
     }
+
 }

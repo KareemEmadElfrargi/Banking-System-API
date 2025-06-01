@@ -59,5 +59,11 @@ public class AccountController {
         List<BankAccount> accounts = accountRepository.findByUser(user);
         return ResponseEntity.ok(accounts);
     }
+    @GetMapping("/total-balance")
+    public ResponseEntity<Double> getTotalBalance(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = ((UserPrincipal) userDetails).getUser();
+        Double totalBalance = accountService.getTotalBalance(user);
+        return ResponseEntity.ok(totalBalance != null ? totalBalance : 0.0);
+    }
 
 }
