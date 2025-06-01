@@ -59,4 +59,5 @@ public class AccountController {
         List<BankAccount> accounts = accountRepository.findByUser(user);
         return ResponseEntity.ok(accounts);
     }
+
 }

@@ -3,6 +3,7 @@ package com.kareem.Banking_System_API.service;
 import com.kareem.Banking_System_API.model.BankAccount;
 import com.kareem.Banking_System_API.model.Transaction;
 import com.kareem.Banking_System_API.model.TransactionType;
+import com.kareem.Banking_System_API.model.User;
 import com.kareem.Banking_System_API.repository.AccountRepository;
 import com.kareem.Banking_System_API.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -166,6 +167,17 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         if (!account.getUser().getUsername().equals(username)) {
             throw new RuntimeException("You do not have access to this account");
+        }
+        return account;
+    }
+
+    public BankAccount getAccountById(Long id, User user) {
+
+        BankAccount account = bankAccountRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Account not found")
+        );
+        if (!account.getUser().getId().equals(user.getId())){
+            throw new RuntimeException("You are not allowed to access this account");
         }
         return account;
     }

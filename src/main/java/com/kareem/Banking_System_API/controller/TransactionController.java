@@ -4,9 +4,13 @@ import com.kareem.Banking_System_API.dto.TransactionRequest;
 import com.kareem.Banking_System_API.dto.TransferRequest;
 import com.kareem.Banking_System_API.model.BankAccount;
 import com.kareem.Banking_System_API.model.Transaction;
+import com.kareem.Banking_System_API.model.User;
 import com.kareem.Banking_System_API.service.TransactionService;
+import com.kareem.Banking_System_API.service.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +51,15 @@ public class TransactionController {
     public double getWithdrawnToday(@PathVariable Long accountId){
         BankAccount account = transactionService.getAccountIfAuthorized(accountId);
         return transactionService.getTotalWithdrawnOrTransferredToday(account);
+    }
+
+    @GetMapping("/{accountId}/balance")
+    public ResponseEntity<Double> getAccountBalance(@PathVariable Long accountId,
+                                                    @AuthenticationPrincipal UserDetails userDetails) {
+        User user = ((UserPrincipal)userDetails).getUser();
+        BankAccount account = transactionService.getAccountById(accountId,user);
+        return ResponseEntity.ok(account.getBalance());
+
     }
 
 }
