@@ -39,3 +39,5 @@ Secure transactions using JWT ownership check + user-account relation
 - Java 21
 - Maven  
 - PostgreSQL
+## Video
+ https://github.com/user-attachments/assets/140a9385-37e0-4bf2-9fda-d0c799005865
