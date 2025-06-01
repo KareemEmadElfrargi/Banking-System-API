@@ -14,4 +14,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByBankAccountId(Long accountId);
 
     List<Transaction> findByBankAccountAndTypeInAndTimestampBetween(BankAccount account, List<TransactionType> types, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    List<Transaction> findTop5ByBankAccountOrderByTimestampDesc(BankAccount account);
+
 }

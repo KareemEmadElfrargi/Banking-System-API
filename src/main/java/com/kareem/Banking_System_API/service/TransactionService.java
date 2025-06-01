@@ -181,4 +181,8 @@ public class TransactionService {
         }
         return account;
     }
+    public List<Transaction> getLast5Transactions(BankAccount bankAccount) {
+        return transactionRepository.findTop5ByBankAccountOrderByTimestampDesc(bankAccount);
+
+    }
 }
